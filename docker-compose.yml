@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_PORT=5173
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm run dev -- --host 0.0.0.0
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: hr_letter_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: hr_user
+      POSTGRES_PASSWORD: hr_password_secret
+      POSTGRES_DB: hr_letter_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
