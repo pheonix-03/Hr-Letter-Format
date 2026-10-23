@@ -81,8 +81,8 @@ Employee Signature: _______________________      Date: ______________`,
     name: 'Performance Improvement Plan (PIP) Letter',
     category: 'disciplinary_performance',
     subcategory: 'Performance',
-    description: 'Structured performance improvement letter with time period and evaluation milestones.',
-    subject: 'Performance Improvement Plan (PIP) Notification – {{period}}',
+    description: 'Structured performance improvement letter with explicit review date and evaluation milestones.',
+    subject: 'Performance Improvement Plan (PIP) Notification – Review Date: {{review_date}}',
     content: `Date: {{letter_date}}
 
 To,
@@ -91,29 +91,31 @@ Employee ID: {{employee_id}}
 Designation: {{designation}}
 Department: {{department}}
 
-Subject: Performance Improvement Plan (PIP) – Duration: {{period}}
+Subject: Performance Improvement Plan (PIP) – Formal Review Date: {{review_date}}
 
 Dear {{employee_name}},
 
-This communication is to formally inform you that you are being placed on a Performance Improvement Plan (PIP) effective from {{effective_date}} for a duration of {{period}}.
+This communication is to formally inform you that you are being placed on a Performance Improvement Plan (PIP) effective from {{effective_date}}, with a formal performance review scheduled on {{review_date}} (Duration: {{period}}).
 
 1. Background & Performance Deficiencies:
 During recent reviews and evaluations, management has identified key areas where your performance does not meet the expected standards of {{company_name}}:
 {{reason_for_letter}}
 
 2. Objectives and Expected Milestones:
-During this {{period}} period, you will be expected to achieve the following specific goals:
+Between {{effective_date}} and the formal review date of {{review_date}}, you will be expected to achieve the following specific goals:
 • Attain 100% adherence to defined productivity benchmarks and quality parameters.
 • Complete all daily assignments within established turnaround times.
 • Attend weekly status and coaching reviews with your reporting manager, {{reporting_manager}}.
 
-3. Support and Evaluation:
-The Company is committed to providing you with the necessary guidance, feedback, and support to help you achieve these milestones. Regular progress check-ins will be scheduled throughout this plan.
+3. Support and Interim Monitoring:
+The Company is committed to providing you with the necessary guidance, feedback, and support to help you achieve these milestones. Regular progress check-ins will be scheduled leading up to the review date.
 
-4. Outcome of PIP:
-At the conclusion of this {{period}} period (or earlier if necessary), a comprehensive evaluation will take place. Satisfactory completion will result in closure of the plan. Failure to demonstrate the required sustained improvement may lead to further action, including reassignment or termination of employment.
+4. Performance Review Date & Outcome:
+A formal, comprehensive evaluation will take place on the scheduled Review Date: {{review_date}}.
+• Satisfactory performance and sustained milestone achievement by {{review_date}} will result in successful closure of this plan.
+• Failure to demonstrate the required improvement on or before the review date of {{review_date}} may lead to further action, up to and including reassignment or termination of employment in accordance with company policy.
 
-We encourage you to utilize this opportunity to align your output with organizational standards.
+We encourage you to utilize this opportunity and available coaching to align your output with organizational standards.
 
 Yours sincerely,
 For {{company_name}}
@@ -122,7 +124,7 @@ For {{company_name}}
 {{signatory_designation}}
 
 EMPLOYEE ACKNOWLEDGEMENT:
-I, {{employee_name}}, acknowledge that I have received and reviewed the terms of this Performance Improvement Plan.
+I, {{employee_name}}, acknowledge that I have received and reviewed the terms of this Performance Improvement Plan effective {{effective_date}} with formal Review Date scheduled on {{review_date}}.
 Signature: ______________________________     Date: ______________`,
     paragraphs: [],
     fields: [
@@ -131,15 +133,16 @@ Signature: ______________________________     Date: ______________`,
       { key: 'designation', label: 'Designation', type: 'text', required: true, defaultValue: '' },
       { key: 'department', label: 'Department', type: 'text', required: true, defaultValue: '' },
       { key: 'effective_date', label: 'PIP Start / Effective Date', type: 'date', required: true, defaultValue: '' },
-      { key: 'period', label: 'PIP Time Period (e.g. 30 Days, 60 Days)', type: 'text', required: true, defaultValue: '30 Days' },
+      { key: 'review_date', label: 'PIP Review Date', type: 'date', required: true, defaultValue: '' },
+      { key: 'period', label: 'Time Period / Duration (e.g. 8 Days, 30 Days)', type: 'text', required: false, defaultValue: '30 Days' },
       { key: 'reason_for_letter', label: 'Performance Deficiencies', type: 'textarea', required: true, defaultValue: 'Target achievement below required threshold and quality metrics inconsistently met.' },
       { key: 'reporting_manager', label: 'Reviewing Manager', type: 'text', required: true, defaultValue: '' },
     ],
     isGlobal: true,
     isDefault: false,
-    version: 1,
+    version: 2,
     previousVersionId: null,
-    tags: ['PIP', 'Performance', 'Evaluation', 'Time Period', 'Coaching'],
+    tags: ['PIP', 'Performance', 'Evaluation', 'Review Date', 'Time Period', 'Coaching'],
     requiresApproval: true,
     approvalLevels: 1,
     createdBy: 'system',

@@ -34,7 +34,7 @@ import {
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { parseExcelFile, generateSampleExcel, type ParsedExcelResult } from '../services/excelParser';
+import { parseExcelFile, generateSampleExcel, computeReviewDate, type ParsedExcelResult } from '../services/excelParser';
 import { allTemplates, getTemplateById } from '../templates';
 import { fillTemplate } from '../services/templateEngine';
 import { generateReferenceNumber } from '../services/referenceNumberService';
@@ -151,6 +151,12 @@ export const BatchUpload: React.FC = () => {
           letter_date: row.data.letter_date || now.split('T')[0],
           effective_date: row.data.effective_date || row.data.letter_date || now.split('T')[0],
           period: row.data.period || '8 Days',
+          review_date:
+            row.data.review_date ||
+            computeReviewDate(
+              row.data.effective_date || row.data.letter_date || now.split('T')[0],
+              row.data.period || '8 Days',
+            ),
         };
 
         const renderedContent = fillTemplate(template.content, mergedData);
@@ -317,6 +323,13 @@ export const BatchUpload: React.FC = () => {
       ),
     },
     {
+      title: 'Review Date',
+      key: 'review_date',
+      render: (_: any, record: BatchRow) => (
+        <Tag color="orange">{record.data.review_date || '-'}</Tag>
+      ),
+    },
+    {
       title: 'Department',
       key: 'department',
       render: (_: any, record: BatchRow) => record.data.department || '-',
@@ -381,6 +394,13 @@ export const BatchUpload: React.FC = () => {
       key: 'period',
       render: (_: any, record: GeneratedDocument) => (
         <Tag color="purple">{record.filledData?.period || '-'}</Tag>
+      ),
+    },
+    {
+      title: 'Review Date',
+      key: 'review_date',
+      render: (_: any, record: GeneratedDocument) => (
+        <Tag color="orange">{record.filledData?.review_date || '-'}</Tag>
       ),
     },
     {

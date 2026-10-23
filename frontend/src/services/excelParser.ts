@@ -54,6 +54,15 @@ const COLUMN_ALIASES: Record<string, string> = {
   'period days': 'period',
   'pip duration': 'period',
 
+  // Review Date (PIP / Warning Evaluation Date)
+  'review date': 'review_date',
+  'reviewdate': 'review_date',
+  'pip review date': 'review_date',
+  'pip review': 'review_date',
+  'date of review': 'review_date',
+  'evaluation date': 'review_date',
+  'review': 'review_date',
+
   // Role & Org
   'designation': 'designation',
   'role': 'designation',
@@ -95,6 +104,26 @@ function formatPeriod(raw: any): string {
     return `${str} Days`;
   }
   return str;
+}
+
+export function computeReviewDate(effectiveDateStr: string, periodStr: string): string {
+  if (!effectiveDateStr) return '';
+  const parsedEff = dayjs(effectiveDateStr);
+  if (!parsedEff.isValid()) return '';
+
+  const matchNum = String(periodStr).match(/(\d+)\s*(day|month|week)?/i);
+  if (matchNum) {
+    const num = parseInt(matchNum[1], 10);
+    const unit = (matchNum[2] || 'day').toLowerCase();
+    if (unit.startsWith('month')) {
+      return parsedEff.add(num, 'month').format('DD MMMM YYYY');
+    } else if (unit.startsWith('week')) {
+      return parsedEff.add(num, 'week').format('DD MMMM YYYY');
+    } else {
+      return parsedEff.add(num, 'day').format('DD MMMM YYYY');
+    }
+  }
+  return parsedEff.add(30, 'day').format('DD MMMM YYYY');
 }
 
 export async function parseExcelFile(file: File): Promise<ParsedExcelResult> {
@@ -144,7 +173,7 @@ export async function parseExcelFile(file: File): Promise<ParsedExcelResult> {
             const canonicalKey = COLUMN_ALIASES[cleanKey] || cleanKey.replace(/\s+/g, '_');
             const cleanVal = val !== undefined && val !== null ? String(val).trim() : '';
 
-            if (canonicalKey === 'letter_date' || canonicalKey === 'effective_date') {
+            if (canonicalKey === 'letter_date' || canonicalKey === 'effective_date' || canonicalKey === 'review_date') {
               normalizedData[canonicalKey] = formatExcelDate(cleanVal);
             } else if (canonicalKey === 'period') {
               normalizedData[canonicalKey] = formatPeriod(cleanVal);
@@ -176,6 +205,23 @@ export async function parseExcelFile(file: File): Promise<ParsedExcelResult> {
           // If Time period is missing, default
           if (!normalizedData.period) {
             normalizedData.period = '30 Days';
+          }
+
+          // If Review Date is missing, compute from effective date + period
+          if (!normalizedData.review_date) {
+            normalizedData.review_date = computeReviewDate(normalizedData.effective_date, normalizedData.period);
+          }
+
+          // If period was missing or blank, compute days between effective_date and review_date
+          if (normalizedData.review_date && normalizedData.effective_date) {
+            const effD = dayjs(normalizedData.effective_date);
+            const revD = dayjs(normalizedData.review_date);
+            if (effD.isValid() && revD.isValid()) {
+              const diff = revD.diff(effD, 'day');
+              if (diff > 0 && !normalizedData.period) {
+                normalizedData.period = `${diff} Days`;
+              }
+            }
           }
 
           const isValid = errors.length === 0;
@@ -222,6 +268,7 @@ export function generateSampleExcel(customFields?: TemplateField[]): Blob {
       'Letter date': '23 October 2026',
       'Effective Date': '24 October 2026',
       'Time Period': '8 Days',
+      'Review Date': '01 November 2026',
       'Department': 'Operations',
       'Designation': 'Customer Service Execuitive',
     },
@@ -231,6 +278,7 @@ export function generateSampleExcel(customFields?: TemplateField[]): Blob {
       'Letter date': '23 October 2026',
       'Effective Date': '24 October 2026',
       'Time Period': '8 Days',
+      'Review Date': '01 November 2026',
       'Department': 'Operations',
       'Designation': 'Customer Service Execuitive',
     },
@@ -240,6 +288,7 @@ export function generateSampleExcel(customFields?: TemplateField[]): Blob {
       'Letter date': '23 October 2026',
       'Effective Date': '24 October 2026',
       'Time Period': '8 Days',
+      'Review Date': '01 November 2026',
       'Department': 'Operations',
       'Designation': 'Customer Support Executive',
     },
@@ -255,6 +304,7 @@ export function generateSampleExcel(customFields?: TemplateField[]): Blob {
     { wch: 20 }, // Letter date
     { wch: 20 }, // Effective Date
     { wch: 15 }, // Time Period
+    { wch: 20 }, // Review Date
     { wch: 18 }, // Department
     { wch: 30 }, // Designation
   ];

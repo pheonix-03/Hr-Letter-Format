@@ -36,6 +36,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import dayjs from 'dayjs';
 import { allTemplates, getTemplateById } from '../templates';
+import { computeReviewDate } from '../services/excelParser';
 import { fillTemplate, extractPlaceholders } from '../services/templateEngine';
 import { generateDocx } from '../services/docxGenerator';
 import { generatePdfFromElement, downloadPdfBlob } from '../services/pdfGenerator';
@@ -132,6 +133,7 @@ export const DocumentGenerator: React.FC = () => {
       letter_date: todayStr,
       effective_date: todayStr,
       period: '30 Days',
+      review_date: computeReviewDate(todayStr, '30 Days'),
     };
 
     if (selectedEmployee) {
@@ -159,7 +161,17 @@ export const DocumentGenerator: React.FC = () => {
   }, [selectedTemplate, formData, referenceNumber]);
 
   const handleFieldChange = (key: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [key]: value }));
+    setFormData((prev) => {
+      const next = { ...prev, [key]: value };
+      if (key === 'effective_date' || key === 'period') {
+        const eff = key === 'effective_date' ? value : next.effective_date;
+        const per = key === 'period' ? value : next.period;
+        if (eff && per) {
+          next.review_date = computeReviewDate(eff, per);
+        }
+      }
+      return next;
+    });
   };
 
   const handleSelectEmployee = (empId: string) => {
