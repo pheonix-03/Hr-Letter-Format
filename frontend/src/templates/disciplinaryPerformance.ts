@@ -47,16 +47,7 @@ Any further substantiated incident of inappropriate or unprofessional behaviour,
 
 You are expected to treat this Final Warning with the utmost seriousness and demonstrate immediate and sustained improvement in your conduct.
 
-Please sign below to acknowledge receipt of this Final Warning Letter. Your signature confirms receipt of the document and does not necessarily indicate agreement with its contents.
-
-For and on behalf of {{company_name}}
-
-{{authorized_signatory}}
-{{signatory_designation}}
-
-EMPLOYEE ACKNOWLEDGEMENT:
-I, {{employee_name}}, acknowledge receipt of this Final Warning Letter dated {{letter_date}}.
-Employee Signature: _______________________      Date: ______________`,
+Please sign below to acknowledge receipt of this Final Warning Letter. Your signature confirms receipt of the document and does not necessarily indicate agreement with its contents.`,
     paragraphs: [],
     fields: [
       { key: 'employee_name', label: 'Employee Name', type: 'text', required: true, defaultValue: '' },
@@ -115,17 +106,7 @@ A formal, comprehensive evaluation will take place on the scheduled Review Date:
 • Satisfactory performance and sustained milestone achievement by {{review_date}} will result in successful closure of this plan.
 • Failure to demonstrate the required improvement on or before the review date of {{review_date}} may lead to further action, up to and including reassignment or termination of employment in accordance with company policy.
 
-We encourage you to utilize this opportunity and available coaching to align your output with organizational standards.
-
-Yours sincerely,
-For {{company_name}}
-
-{{authorized_signatory}}
-{{signatory_designation}}
-
-EMPLOYEE ACKNOWLEDGEMENT:
-I, {{employee_name}}, acknowledge that I have received and reviewed the terms of this Performance Improvement Plan effective {{effective_date}} with formal Review Date scheduled on {{review_date}}.
-Signature: ______________________________     Date: ______________`,
+We encourage you to utilize this opportunity and available coaching to align your output with organizational standards.`,
     paragraphs: [],
     fields: [
       { key: 'employee_name', label: 'Employee Name', type: 'text', required: true, defaultValue: '' },

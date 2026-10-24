@@ -442,3 +442,32 @@ function applyFormatter(value: string, formatter: string): string {
 function escapeRegex(str: string): string {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
+
+/**
+ * Strips duplicate trailing sign-offs, signatory blocks, and employee acknowledgements
+ * from rendered letter content so that the dedicated letterhead signature block / seal
+ * is rendered once without duplication or visual overlap.
+ */
+export function stripTrailingSignatures(text: string): string {
+  if (!text) return '';
+  let cleaned = text;
+
+  // 1. Cut off everything from "EMPLOYEE ACKNOWLEDGEMENT" to the end
+  const ackMatch = cleaned.search(/\n\s*EMPLOYEE\s+(?:RECEIPT\s+)?ACKNOWLEDGEMENT\s*:?/i);
+  if (ackMatch !== -1) {
+    cleaned = cleaned.substring(0, ackMatch);
+  }
+
+  // 2. Cut off trailing "Yours sincerely," / "Sincerely," / "For and on behalf of" if present at bottom
+  const generalSignoff = cleaned.search(/\n\s*(?:Yours\s+(?:sincerely|faithfully)|Sincerely,)\s*\n/i);
+  if (generalSignoff !== -1) {
+    cleaned = cleaned.substring(0, generalSignoff);
+  }
+
+  const forCompanyMatch = cleaned.search(/\n\s*For\s+(?:and\s+on\s+behalf\s+of\s+)?[A-Za-z\s{}]+\n\s*\{\{authorized_signatory\}\}/i);
+  if (forCompanyMatch !== -1) {
+    cleaned = cleaned.substring(0, forCompanyMatch);
+  }
+
+  return cleaned.trim();
+}

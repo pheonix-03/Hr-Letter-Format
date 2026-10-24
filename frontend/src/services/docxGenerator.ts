@@ -14,6 +14,7 @@ import {
   PageNumber,
 } from 'docx';
 import type { GeneratedDocument, LetterheadConfig, Company } from '../types';
+import { stripTrailingSignatures } from './templateEngine';
 
 export async function generateDocx(
   doc: GeneratedDocument,
@@ -33,7 +34,8 @@ export async function generateDocx(
     .replace(/<[^>]+>/g, '')
     .trim();
 
-  const contentParagraphs = plainText.split('\n\n').filter((p) => p.trim().length > 0);
+  const cleanedText = stripTrailingSignatures(plainText);
+  const contentParagraphs = cleanedText.split('\n\n').filter((p) => p.trim().length > 0);
 
   const docxParagraphs: Paragraph[] = [];
 

@@ -4,6 +4,7 @@
 import React from 'react';
 import type { Company, LetterheadConfig } from '../types';
 import { SignatureBlock } from './SignatureBlock';
+import { stripTrailingSignatures } from '../services/templateEngine';
 
 interface LetterheadPreviewProps {
   letterhead: Partial<LetterheadConfig>;
@@ -42,8 +43,9 @@ export const LetterheadPreview: React.FC<LetterheadPreviewProps> = ({
   const fontColor = letterhead.bodyFontColor || '#1f2937';
   const lineHeight = letterhead.bodyLineHeight || 1.6;
 
-  // Format content text: convert newlines to paragraphs
-  const paragraphs = content ? content.split('\n\n') : [];
+  // Format content text: strip duplicate trailing signatures and convert newlines to paragraphs
+  const cleanedContent = stripTrailingSignatures(content || '');
+  const paragraphs = cleanedContent ? cleanedContent.split('\n\n') : [];
 
   return (
     <div
